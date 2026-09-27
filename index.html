@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111315">
+<title>Insulin Dose Calculator</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+<div class="app">
+  <header class="panel topbar">
+    <div>
+      <h1>Insulin Dose Calculator</h1>
+      <div class="sub">Outpatient rapid-acting meal + correction bolus calculator</div>
+      <div class="saved" id="savedStatus">Settings stored locally</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="saveSettings">Save settings</button>
+      <button class="btn" id="clearCase">Clear case</button>
+      <button class="btn danger" id="resetSettings">Reset settings</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="section-title-row">
+      <div>
+        <h2>Calculation mode</h2>
+        <div class="sub">Choose which bolus components to calculate.</div>
+      </div>
+    </div>
+    <div class="seg three" id="modeSeg">
+      <button type="button" data-mode="meal-correction" class="active"><strong>Meal + correction</strong><span>Carbs + glucose</span></button>
+      <button type="button" data-mode="meal"><strong>Meal only</strong><span>Carbohydrate coverage</span></button>
+      <button type="button" data-mode="correction"><strong>Correction only</strong><span>Glucose correction</span></button>
+    </div>
+  </section>
+
+  <section class="twocol">
+    <div class="stack">
+      <section class="panel">
+        <div class="section-title-row">
+          <div>
+            <h2>Case inputs</h2>
+            <div class="sub">Transient case values are not saved.</div>
+          </div>
+          <div class="seg compact" id="glucoseUnitSeg">
+            <button type="button" data-unit="mgdl" class="active"><strong>mg/dL</strong></button>
+            <button type="button" data-unit="mmol"><strong>mmol/L</strong></button>
+          </div>
+        </div>
+
+        <div class="input-section" id="mealSection">
+          <div class="input-section-title">Meal</div>
+          <div class="fields">
+            <div class="field">
+              <label>Carbohydrate</label>
+              <div class="inputwrap"><input id="carbs" type="text" inputmode="decimal" placeholder="e.g. 60"><span class="suffix">g</span></div>
+            </div>
+            <div class="field">
+              <label>Insulin-to-carb ratio (ICR)</label>
+              <div class="inputwrap"><span class="prefix">1:</span><input id="icr" class="ratioinput" type="text" inputmode="decimal" placeholder="e.g. 10"><span class="suffix">g/U</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-section" id="correctionSection">
+          <div class="input-section-title">Correction</div>
+          <div class="fields">
+            <div class="field">
+              <label>Current glucose</label>
+              <div class="inputwrap"><input id="currentGlucose" type="text" inputmode="decimal" placeholder="e.g. 220"><span class="suffix glucoseUnitLabel">mg/dL</span></div>
+            </div>
+            <div class="field">
+              <label>Target glucose</label>
+              <div class="inputwrap"><input id="targetGlucose" type="text" inputmode="decimal" placeholder="e.g. 120"><span class="suffix glucoseUnitLabel">mg/dL</span></div>
+            </div>
+            <div class="field">
+              <label>Correction factor / ISF</label>
+              <div class="inputwrap"><input id="isf" type="text" inputmode="decimal" placeholder="e.g. 40"><span class="suffix isfUnitLabel">mg/dL/U</span></div>
+            </div>
+            <div class="field">
+              <label>Active correction insulin (IOB)</label>
+              <div class="inputwrap"><input id="iob" type="text" inputmode="decimal" placeholder="0"><span class="suffix">U</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-section">
+          <div class="input-section-title">Dose handling</div>
+          <div class="fields">
+            <div class="field">
+              <label>Rounding increment</label>
+              <div class="seg compact" id="roundingSeg">
+                <button type="button" data-round="0.1"><strong>0.1 U</strong></button>
+                <button type="button" data-round="0.5" class="active"><strong>0.5 U</strong></button>
+                <button type="button" data-round="1"><strong>1 U</strong></button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Negative correction can reduce meal bolus</label>
+              <div class="seg compact" id="negativeCorrectionSeg">
+                <button type="button" data-value="on" class="active"><strong>On</strong></button>
+                <button type="button" data-value="off"><strong>Off</strong></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="disclosure">
+          <summary><span>Optional TDD estimators</span><span class="muted">500 / 1800 rules</span></summary>
+          <div class="details-body">
+            <div class="fields">
+              <div class="field">
+                <label>Total daily insulin dose (TDD)</label>
+                <div class="inputwrap"><input id="tdd" type="text" inputmode="decimal" placeholder="e.g. 40"><span class="suffix">U/day</span></div>
+              </div>
+              <div class="field">
+                <label>Estimated ICR</label>
+                <div class="soft result-inline"><strong id="estIcr">—</strong><span>g/U</span></div>
+              </div>
+              <div class="field">
+                <label>Estimated ISF</label>
+                <div class="soft result-inline"><strong id="estIsf">—</strong><span class="isfUnitLabel">mg/dL/U</span></div>
+              </div>
+              <div class="field estimator-actions">
+                <button class="btn" id="useIcrEstimate" type="button">Use estimated ICR</button>
+                <button class="btn" id="useIsfEstimate" type="button">Use estimated ISF</button>
+              </div>
+            </div>
+            <div class="tiny note">These are population-based starting estimates, not individualized settings. ICR = 500 ÷ TDD; rapid-acting ISF = 1800 ÷ TDD.</div>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel">
+        <details class="disclosure">
+          <summary><span>Saved clinician defaults</span><span class="muted">Local device only</span></summary>
+          <div class="details-body">
+            <div class="fields">
+              <div class="field">
+                <label>Default target glucose</label>
+                <div class="inputwrap"><input id="defaultTarget" type="text" inputmode="decimal"><span class="suffix glucoseUnitLabel">mg/dL</span></div>
+              </div>
+              <div class="field">
+                <label>Default ICR</label>
+                <div class="inputwrap"><span class="prefix">1:</span><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div>
+              </div>
+              <div class="field">
+                <label>Default ISF</label>
+                <div class="inputwrap"><input id="defaultIsf" type="text" inputmode="decimal"><span class="suffix isfUnitLabel">mg/dL/U</span></div>
+              </div>
+              <div class="field">
+                <label>Low-glucose alert threshold</label>
+                <div class="inputwrap"><input id="lowThreshold" type="text" inputmode="decimal"><span class="suffix glucoseUnitLabel">mg/dL</span></div>
+              </div>
+            </div>
+            <div class="tiny note">Only calculator settings are saved. Current glucose, carbohydrate, IOB, and other case-specific values are not persisted.</div>
+          </div>
+        </details>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel hero-result">
+        <div class="tiny caps">CALCULATED RAPID-ACTING BOLUS</div>
+        <div class="dose" id="finalDose">—</div>
+        <div class="muted" id="doseSub">Enter the required inputs</div>
+        <div id="warningBox" class="warningBox hidden"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Dose breakdown</h2>
+        <div class="breakdown">
+          <div class="row"><span>Meal bolus</span><strong id="mealDoseOut">—</strong></div>
+          <div class="row"><span>Raw correction</span><strong id="rawCorrectionOut">—</strong></div>
+          <div class="row"><span>IOB deducted</span><strong id="iobOut">—</strong></div>
+          <div class="row"><span>Correction after IOB</span><strong id="netCorrectionOut">—</strong></div>
+          <div class="row total"><span>Unrounded total</span><strong id="rawTotalOut">—</strong></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <details class="disclosure" open>
+          <summary><span>Formula</span><span class="muted">Transparent math</span></summary>
+          <div class="details-body formulas">
+            <div><strong>Meal dose</strong><br>carbohydrate grams ÷ ICR</div>
+            <div><strong>Correction dose</strong><br>(current glucose − target glucose) ÷ ISF</div>
+            <div><strong>IOB</strong><br>subtracted from a positive correction component only</div>
+            <div><strong>Final dose</strong><br>meal dose + correction after IOB, then rounded to the selected increment</div>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel">
+        <details class="disclosure">
+          <summary><span>Clinical notes & references</span><span class="muted">Tap to expand</span></summary>
+          <div class="details-body">
+            <p class="tiny">This tool is intended as a transparent clinical-reference calculator for outpatient rapid-acting insulin dosing. It does not replace individualized insulin settings, clinical judgment, device-specific bolus-calculator logic, or a patient's prescribed hypoglycemia/sick-day plan.</p>
+            <p class="tiny">UCSF Diabetes Teaching Center describes carbohydrate coverage as carbohydrate grams divided by the insulin-to-carbohydrate ratio, and correction dosing from the difference between current and target glucose divided by the insulin sensitivity factor. UCSF also describes the Rule of 500 and Rule of 1800 as starting estimates that require individualization.</p>
+            <p class="tiny refs"><a href="https://diabetesteachingcenter.ucsf.edu/about-diabetes/type-2-diabetes/use-insulin-type-2-diabetes/calculating-insulin-dose" target="_blank" rel="noopener">UCSF — Calculating Insulin Dose</a></p>
+          </div>
+        </details>
+      </section>
+    </div>
+  </section>
+</div>
+<script src="insulin_app.js?v=1"></script>
+</body>
+</html>
