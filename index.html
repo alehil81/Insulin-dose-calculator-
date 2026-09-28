@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 <div class="app">
@@ -114,31 +114,36 @@
           </div>
         </details>
 
-        <div class="mini-box">
-          <div class="mini-title">Optional meal-dose modifiers</div>
-          <div class="modifier-grid">
-            <div class="modifier">
-              <div class="modifier-top">
-                <div><strong>Exercise</strong><div class="tiny">reduce dose</div></div>
-                <div class="seg tiny-toggle" id="activityToggle">
-                  <button type="button" data-value="on"><strong>On</strong></button>
-                  <button type="button" data-value="off" class="active"><strong>Off</strong></button>
+        <details class="mini-box collapsible-box">
+          <summary class="compact-summary">
+            <span>Optional meal-dose modifiers</span>
+            <span class="summary-hint">Tap to expand</span>
+          </summary>
+          <div class="collapsible-content">
+            <div class="modifier-grid">
+              <div class="modifier">
+                <div class="modifier-top">
+                  <div><strong>Exercise</strong><div class="tiny">reduce dose</div></div>
+                  <div class="seg tiny-toggle" id="activityToggle">
+                    <button type="button" data-value="on"><strong>On</strong></button>
+                    <button type="button" data-value="off" class="active"><strong>Off</strong></button>
+                  </div>
                 </div>
+                <div class="inputwrap compact-pct"><input id="activityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">% ↓</span></div>
               </div>
-              <div class="inputwrap compact-pct"><input id="activityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">% ↓</span></div>
-            </div>
-            <div class="modifier">
-              <div class="modifier-top">
-                <div><strong>Corticosteroid</strong><div class="tiny">prednisone / dexamethasone</div></div>
-                <div class="seg tiny-toggle" id="steroidToggle">
-                  <button type="button" data-value="on"><strong>On</strong></button>
-                  <button type="button" data-value="off" class="active"><strong>Off</strong></button>
+              <div class="modifier">
+                <div class="modifier-top">
+                  <div><strong>Corticosteroid</strong><div class="tiny">prednisone / dexamethasone</div></div>
+                  <div class="seg tiny-toggle" id="steroidToggle">
+                    <button type="button" data-value="on"><strong>On</strong></button>
+                    <button type="button" data-value="off" class="active"><strong>Off</strong></button>
+                  </div>
                 </div>
+                <div class="inputwrap compact-pct"><input id="steroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">% ↑</span></div>
               </div>
-              <div class="inputwrap compact-pct"><input id="steroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">% ↑</span></div>
             </div>
           </div>
-        </div>
+        </details>
 
         <div class="mini-box tdd-box">
           <details class="inline-disclosure">
@@ -239,6 +244,6 @@
     </details>
   </section>
 </div>
-<script src="insulin_app.js?v=8"></script>
+<script src="insulin_app.js?v=9"></script>
 </body>
 </html>

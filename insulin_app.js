@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const SETTINGS_KEY="insulin-dose-calculator-settings-v8";
+const SETTINGS_KEY="insulin-dose-calculator-settings-v9";
 
 const defaults={
   mode:"meal-correction",

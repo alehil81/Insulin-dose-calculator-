@@ -1,6 +1,6 @@
-const CACHE="insulin-dose-calculator-v8";
+const CACHE="insulin-dose-calculator-v9";
 const ASSETS=[
- "./","./index.html","./styles.css?v=8","./insulin_app.js?v=8","./manifest.webmanifest",
+ "./","./index.html","./styles.css?v=9","./insulin_app.js?v=9","./manifest.webmanifest",
  "./icon.svg","./icon-192.png?v=5","./icon-512.png?v=5","./apple-touch-icon.png?v=6"
 ];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
