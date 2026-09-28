@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 <div class="app">
@@ -82,8 +82,18 @@
         <div class="mini-box">
           <div class="mini-title-row">
             <div class="mini-title">Recent bolus / active insulin</div>
-            <div class="tiny">estimated from recent rapid-acting dose</div>
+            <div class="tiny">exponential rapid-acting curve</div>
           </div>
+
+          <div class="recent-purpose-row">
+            <label>Recent dose was for</label>
+            <div class="seg recent-purpose-seg" id="recentBolusTypeSeg">
+              <button type="button" data-recent-bolus-type="meal"><strong>Meal</strong></button>
+              <button type="button" data-recent-bolus-type="correction"><strong>Correction</strong></button>
+              <button type="button" data-recent-bolus-type="meal-correction" class="active"><strong>Meal + correction</strong></button>
+            </div>
+          </div>
+
           <div class="triple-fields recent-insulin-fields">
             <div class="field">
               <label>Recent dose</label>
@@ -98,6 +108,7 @@
               <div class="soft compact-result"><strong id="estimatedIobOut">—</strong><span>U</span></div>
             </div>
           </div>
+          <div class="tiny iob-model-note">Curve uses a 10-minute onset delay and ~75-minute peak; entered active-insulin time controls the tail. Bolus purpose does not change how much insulin remains active, but it changes how the result should be interpreted.</div>
         </div>
 
         <div class="mini-box">
@@ -163,7 +174,7 @@
         <div class="breakdown compact-breakdown">
           <div class="row"><span>Meal</span><strong id="mealDoseOut">—</strong></div>
           <div class="row"><span>Raw correction</span><strong id="rawCorrectionOut">—</strong></div>
-          <div class="row"><span>IOB used</span><strong id="iobOut">—</strong></div>
+          <div class="row"><span>Active insulin used</span><strong id="iobOut">—</strong></div>
           <div class="row"><span>Net correction</span><strong id="netCorrectionOut">—</strong></div>
           <div class="row"><span>Base</span><strong id="baseBolusOut">—</strong></div>
           <div class="row"><span>Exercise</span><strong id="activityAdjustmentOut">—</strong></div>
@@ -215,14 +226,15 @@
       <div class="details-body formulas">
         <div><strong>Meal</strong> = carbs ÷ ICR</div>
         <div><strong>Correction</strong> = (BG − target) ÷ insulin sensitivity</div>
-        <div><strong>Active insulin</strong> = linear estimate from recent bolus over the active insulin time</div>
+        <div><strong>Active insulin</strong> = configurable exponential rapid-acting insulin model using dose, time since dose, active-insulin time, ~75-minute peak, and 10-minute delay</div>
         <div><strong>Modifiers</strong> = optional exercise reduction and corticosteroid increase</div>
+        <div><strong>Recent bolus purpose</strong> is recorded for clinical context; active insulin is applied to the positive correction component rather than automatically subtracting it from carbohydrate coverage.</div>
         <div><strong>Basal helper</strong> uses the median of 3 fasting BGs and the selected step.</div>
         <div class="tiny">Clinical-reference calculator only. Individualize ICR, ISF, AIT, activity, corticosteroid, and basal-titration settings.</div>
       </div>
     </details>
   </section>
 </div>
-<script src="insulin_app.js?v=6"></script>
+<script src="insulin_app.js?v=7"></script>
 </body>
 </html>

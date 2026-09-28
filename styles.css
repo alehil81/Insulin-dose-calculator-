@@ -310,3 +310,32 @@ input[type="text"] {
     min-width:0;
   }
 }
+
+
+/* v7 — recent bolus purpose + exponential IOB */
+.recent-purpose-row{
+  margin:7px 0 8px;
+  min-width:0;
+}
+.recent-purpose-row > label{
+  margin-bottom:5px;
+}
+.recent-purpose-seg{
+  width:100%;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.recent-purpose-seg button{
+  min-width:0;
+}
+.recent-purpose-seg strong{
+  font-size:10px;
+  line-height:1.15;
+}
+.iob-model-note{
+  margin-top:7px;
+}
+@media(max-width:440px){
+  .recent-purpose-seg strong{
+    font-size:9px;
+  }
+}

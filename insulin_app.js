@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const SETTINGS_KEY="insulin-dose-calculator-settings-v6";
+const SETTINGS_KEY="insulin-dose-calculator-settings-v7";
 
 const defaults={
   mode:"meal-correction",
@@ -17,6 +17,7 @@ const defaults={
 };
 
 let settings=loadSettings();
+let recentBolusType="meal-correction";
 
 function loadSettings(){
   try{
@@ -66,6 +67,9 @@ function renderSettings(){
   document.querySelectorAll("#negativeCorrectionSeg button").forEach(b=>b.classList.toggle("active",(b.dataset.value==="on")===settings.negativeCorrection));
   document.querySelectorAll("#activityToggle button").forEach(b=>b.classList.toggle("active",(b.dataset.value==="on")===settings.activityOn));
   document.querySelectorAll("#steroidToggle button").forEach(b=>b.classList.toggle("active",(b.dataset.value==="on")===settings.steroidOn));
+  document.querySelectorAll("#recentBolusTypeSeg button").forEach(
+    b=>b.classList.toggle("active",b.dataset.recentBolusType===recentBolusType)
+  );
 
   $("defaultTarget").value=settings.defaultTarget;
   $("defaultIcr").value=settings.defaultIcr!==""?settings.defaultIcr:"";
@@ -106,6 +110,7 @@ function clearCase(){
   $("basalIncrement").value=settings.basalIncrement;
   settings.activityOn=false;
   settings.steroidOn=false;
+  recentBolusType="meal-correction";
   renderSettings();
   calculateTdd();
 }
@@ -121,20 +126,48 @@ function calculateTdd(){
   $("estIsf").textContent=fmt(1800/tdd,1);
 }
 
+function exponentialEffectRemaining(hoursSinceDose,durationHours){
+  // Configurable exponential insulin model based on LoopKit's published equation.
+  // For standard rapid-acting analogs we use ~75 min peak and 10 min delay.
+  // The user's active-insulin time controls action duration.
+  const durationMinutes=durationHours*60;
+  const peakMinutes=75;
+  const delayMinutes=10;
+  const timeMinutes=hoursSinceDose*60;
+  const t=timeMinutes-delayMinutes;
+
+  if(t<=0)return 1;
+  if(t>=durationMinutes)return 0;
+
+  // The model requires duration > 2*peak. Treat shorter entries as invalid.
+  if(durationMinutes<=2*peakMinutes)return NaN;
+
+  const tau=peakMinutes*(1-peakMinutes/durationMinutes)/(1-2*peakMinutes/durationMinutes);
+  const a=2*tau/durationMinutes;
+  const S=1/(1-a+(1+a)*Math.exp(-durationMinutes/tau));
+
+  const remaining=1-S*(1-a)*
+    ((((t*t)/(tau*durationMinutes*(1-a)))-(t/tau)-1)*Math.exp(-t/tau)+1);
+
+  return Math.max(0,Math.min(1,remaining));
+}
+
 function estimatedIob(){
   const dose=parseNum($("recentDose").value);
   const hours=parseNum($("hoursSinceDose").value);
-  const duration=Math.max(.5,parseNum($("activeInsulinTime").value)??settings.activeInsulinTime);
+  const duration=parseNum($("activeInsulinTime").value)??settings.activeInsulinTime;
 
   if(dose===null||dose<=0||hours===null||hours<0)return 0;
-  if(hours>=duration)return 0;
+  if(duration===null||duration<=2.5)return NaN;
 
-  // Transparent linear approximation, not a pump pharmacodynamic curve.
-  return Math.max(0,dose*(1-hours/duration));
+  const remaining=exponentialEffectRemaining(hours,duration);
+  if(!Number.isFinite(remaining))return NaN;
+  return Math.max(0,dose*remaining);
 }
 
 function iobUsed(){
-  return estimatedIob();
+  const value=estimatedIob();
+  return Number.isFinite(value)?value:0;
 }
 
 function calculate(){
@@ -152,8 +185,8 @@ function calculate(){
   const correctionValid=!correctionNeeded||(current!==null&&target!==null&&isf!==null&&isf>0);
 
   const estimated=estimatedIob();
-  const usedIob=iobUsed();
-  $("estimatedIobOut").textContent=fmt(estimated,2);
+  const usedIob=Number.isFinite(estimated)?estimated:0;
+  $("estimatedIobOut").textContent=Number.isFinite(estimated)?fmt(estimated,2):"Check AIT";
 
   if(!mealValid||!correctionValid){
     $("finalDose").textContent="—";
@@ -211,29 +244,51 @@ function updateWarnings(current){
   const box=$("warningBox");
   box.className="warningBox hidden";
   box.textContent="";
-  if(current===null||settings.mode==="meal")return;
+  const messages=[];
 
-  const low=parseNum($("lowThreshold").value)??70;
-
-  if(current<low){
-    box.className="warningBox low";
-    box.textContent="Low-glucose flag: address hypoglycemia according to the patient's established clinical plan before relying on a bolus calculation. The arithmetic is shown for reference.";
-  }else if(current>=250){
-    box.className="warningBox high";
-    box.textContent="High-glucose flag: this calculator provides bolus arithmetic only and does not assess ketones, infusion-site failure, illness, dehydration, or other sick-day factors.";
+  if(current!==null&&settings.mode!=="meal"){
+    const low=parseNum($("lowThreshold").value)??70;
+    if(current<low){
+      messages.push({level:"low",text:"Low-glucose flag: address hypoglycemia according to the patient's established clinical plan before relying on a bolus calculation."});
+    }else if(current>=250){
+      messages.push({level:"high",text:"High-glucose flag: this calculator provides bolus arithmetic only and does not assess ketones, illness, dehydration, injection/site problems, or other sick-day factors."});
+    }
   }
 
   const recentDose=parseNum($("recentDose").value);
   const hours=parseNum($("hoursSinceDose").value);
   const duration=parseNum($("activeInsulinTime").value)??4;
-  if(recentDose!==null&&recentDose>0&&hours!==null&&hours>=0&&hours<duration){
-    const extra=` Recent rapid-acting insulin is still within the selected ${fmt(duration,1)}-hour active-insulin window; review for insulin stacking.`;
-    if(box.classList.contains("hidden")){
-      box.className="warningBox high";
-      box.textContent=extra.trim();
+
+  if(duration<=2.5){
+    messages.push({level:"high",text:"Active insulin time is too short for the selected exponential rapid-acting model. Use an active insulin time above 2.5 hours."});
+  }
+
+  const active=estimatedIob();
+  if(recentDose!==null&&recentDose>0&&hours!==null&&hours>=0&&Number.isFinite(active)&&active>0.01){
+    const purposeText={
+      meal:"meal bolus",
+      correction:"correction-only bolus",
+      "meal-correction":"meal + correction bolus"
+    }[recentBolusType]||"recent bolus";
+
+    let context="";
+    if(recentBolusType==="correction"){
+      context=" This is correction insulin still expected to lower glucose.";
+    }else if(recentBolusType==="meal"){
+      context=" Some of this insulin may still be paired with absorption from the prior meal.";
     }else{
-      box.textContent+=extra;
+      context=" Some of this insulin may still be paired with prior meal absorption, while some may have been given for correction.";
     }
+
+    messages.push({
+      level:"high",
+      text:`Estimated active insulin from the recent ${purposeText}: ${fmt(active,2)} U.${context} Active insulin is used to avoid stacking the positive correction component; it is not automatically subtracted from carbohydrate coverage.`
+    });
+  }
+
+  if(messages.length){
+    box.className="warningBox "+(messages.some(m=>m.level==="low")?"low":"high");
+    box.textContent=messages.map(m=>m.text).join(" ");
   }
 }
 
@@ -290,6 +345,11 @@ document.querySelectorAll("#modeSeg button").forEach(b=>b.addEventListener("clic
 
 document.querySelectorAll("#negativeCorrectionSeg button").forEach(b=>b.addEventListener("click",()=>{
   settings.negativeCorrection=b.dataset.value==="on";
+  renderSettings();
+}));
+
+document.querySelectorAll("#recentBolusTypeSeg button").forEach(b=>b.addEventListener("click",()=>{
+  recentBolusType=b.dataset.recentBolusType;
   renderSettings();
 }));
 
