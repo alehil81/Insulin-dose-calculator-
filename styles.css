@@ -201,3 +201,112 @@ textarea{
     min-width:0;
   }
 }
+
+
+/* v6 — strict mobile width containment */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app {
+  width: 100%;
+  max-width: 1180px;
+  min-width: 0;
+}
+
+.panel,
+.topbar,
+.main-grid,
+.main-grid > *,
+.calculator-panel,
+.result-stack,
+.compact-boxes,
+.compact-boxes > *,
+.mini-box,
+.triple-fields,
+.recent-insulin-fields,
+.modifier-grid,
+.modifier,
+.tiny-controls,
+.basal-panel,
+.basal-compact-grid,
+.bottom-grid,
+.disclosure,
+.field,
+.inputwrap,
+.seg {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.panel,
+.topbar,
+.calculator-panel,
+.basal-panel {
+  width: 100%;
+}
+
+input[type="text"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media(max-width:900px){
+  .main-grid{
+    width:100%;
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  .main-grid > *{
+    width:100%;
+    min-width:0;
+  }
+  .result-stack{
+    width:100%;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:620px){
+  .app{
+    width:100%;
+    max-width:100%;
+    padding-left:8px;
+    padding-right:8px;
+  }
+  .topbar,
+  .calculator-panel,
+  .basal-panel{
+    width:100%;
+    max-width:100%;
+  }
+  .compact-boxes{
+    width:100%;
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  .triple-fields,
+  .recent-insulin-fields{
+    width:100%;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+  .modifier-grid{
+    width:100%;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+
+@media(max-width:440px){
+  .result-stack{
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  .modifier{
+    min-width:0;
+  }
+  .modifier-top{
+    min-width:0;
+  }
+  .modifier-top > div:first-child{
+    min-width:0;
+  }
+}

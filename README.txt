@@ -1,24 +1,22 @@
-Insulin Dose Calculator v5
+Insulin Dose Calculator v6
 
-Changes from v4
-- Attempted stronger iPhone Safari no-zoom behavior:
-  - viewport set to initial-scale=1, maximum-scale=1
-  - all text/number/tel inputs forced to 16px on mobile
-  - -webkit-text-size-adjust set to 100%
-- Removed the visible "1:" prefix from insulin:carb ratio fields.
-- Tightened card width consistency so the top/header card lines up better with the next section.
-- Replaced icon with a custom outline-style icon showing:
-  - insulin syringe
-  - blood drop
-  - calculator
-- Preserved v4 calculations and behavior otherwise.
+Fixes:
+- Corrected the mobile horizontal overflow that made the Rapid-acting dose panel
+  wider than the screen.
+- Top header card and Rapid-acting dose card are now constrained to the same
+  full available width.
+- Added strict min-width:0 / max-width:100% containment to nested grids, fields,
+  inputs, modifier cards, and panels.
+- Mobile one-column grid now uses minmax(0,1fr), preventing intrinsic content
+  widths from forcing the page wider than the viewport.
+- The page itself now prevents horizontal scrolling.
+- Updated icon.svg (the icon actually displayed in the header) to the requested
+  outline-style syringe + blood drop + calculator design.
+- Calculation logic is unchanged.
 
-Replace these files on GitHub Pages:
-- index.html
-- styles.css
-- insulin_app.js
-- sw.js
-- manifest.webmanifest
-- apple-touch-icon.png
-- icon-192.png
-- icon-512.png
+Replace on GitHub Pages:
+index.html
+styles.css
+insulin_app.js
+sw.js
+icon.svg
