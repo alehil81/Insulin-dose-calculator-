@@ -1,9 +1,8 @@
 const $=id=>document.getElementById(id);
-const SETTINGS_KEY="insulin-dose-calculator-settings-v7";
+const SETTINGS_KEY="insulin-dose-calculator-settings-v8";
 
 const defaults={
   mode:"meal-correction",
-  negativeCorrection:true,
   defaultTarget:120,
   defaultIcr:"",
   defaultIsf:"",
@@ -64,7 +63,6 @@ function resetSettings(){
 
 function renderSettings(){
   document.querySelectorAll("#modeSeg button").forEach(b=>b.classList.toggle("active",b.dataset.mode===settings.mode));
-  document.querySelectorAll("#negativeCorrectionSeg button").forEach(b=>b.classList.toggle("active",(b.dataset.value==="on")===settings.negativeCorrection));
   document.querySelectorAll("#activityToggle button").forEach(b=>b.classList.toggle("active",(b.dataset.value==="on")===settings.activityOn));
   document.querySelectorAll("#steroidToggle button").forEach(b=>b.classList.toggle("active",(b.dataset.value==="on")===settings.steroidOn));
   document.querySelectorAll("#recentBolusTypeSeg button").forEach(
@@ -208,7 +206,7 @@ function calculate(){
       iobDeducted=Math.min(usedIob,rawCorrection);
       netCorrection=rawCorrection-iobDeducted;
     }else{
-      netCorrection=settings.negativeCorrection?rawCorrection:0;
+      netCorrection=rawCorrection;
     }
   }
 
@@ -340,11 +338,6 @@ function calculateBasal(){
 
 document.querySelectorAll("#modeSeg button").forEach(b=>b.addEventListener("click",()=>{
   settings.mode=b.dataset.mode;
-  renderSettings();
-}));
-
-document.querySelectorAll("#negativeCorrectionSeg button").forEach(b=>b.addEventListener("click",()=>{
-  settings.negativeCorrection=b.dataset.value==="on";
   renderSettings();
 }));
 

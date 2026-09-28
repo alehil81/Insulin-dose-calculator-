@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 <div class="app">
@@ -79,37 +79,40 @@
           </div>
         </div>
 
-        <div class="mini-box">
-          <div class="mini-title-row">
-            <div class="mini-title">Recent bolus / active insulin</div>
-            <div class="tiny">exponential rapid-acting curve</div>
-          </div>
+        <details class="mini-box collapsible-box">
+          <summary class="compact-summary">
+            <span>Recent bolus / active insulin</span>
+            <span class="summary-hint">Tap to expand</span>
+          </summary>
+          <div class="collapsible-content">
+            <div class="tiny section-caption">Exponential rapid-acting curve</div>
 
-          <div class="recent-purpose-row">
-            <label>Recent dose was for</label>
-            <div class="seg recent-purpose-seg" id="recentBolusTypeSeg">
-              <button type="button" data-recent-bolus-type="meal"><strong>Meal</strong></button>
-              <button type="button" data-recent-bolus-type="correction"><strong>Correction</strong></button>
-              <button type="button" data-recent-bolus-type="meal-correction" class="active"><strong>Meal + correction</strong></button>
+            <div class="recent-purpose-row">
+              <label>Recent dose was for</label>
+              <div class="seg recent-purpose-seg" id="recentBolusTypeSeg">
+                <button type="button" data-recent-bolus-type="meal"><strong>Meal</strong></button>
+                <button type="button" data-recent-bolus-type="correction"><strong>Correction</strong></button>
+                <button type="button" data-recent-bolus-type="meal-correction" class="active"><strong>Meal + correction</strong></button>
+              </div>
             </div>
-          </div>
 
-          <div class="triple-fields recent-insulin-fields">
-            <div class="field">
-              <label>Recent dose</label>
-              <div class="inputwrap"><input id="recentDose" type="text" inputmode="decimal"><span class="suffix">U</span></div>
+            <div class="triple-fields recent-insulin-fields">
+              <div class="field">
+                <label>Recent dose</label>
+                <div class="inputwrap"><input id="recentDose" type="text" inputmode="decimal"><span class="suffix">U</span></div>
+              </div>
+              <div class="field">
+                <label>Hours ago</label>
+                <div class="inputwrap"><input id="hoursSinceDose" type="text" inputmode="decimal"><span class="suffix">h</span></div>
+              </div>
+              <div class="field">
+                <label>Estimated active insulin</label>
+                <div class="soft compact-result"><strong id="estimatedIobOut">—</strong><span>U</span></div>
+              </div>
             </div>
-            <div class="field">
-              <label>Hours ago</label>
-              <div class="inputwrap"><input id="hoursSinceDose" type="text" inputmode="decimal"><span class="suffix">h</span></div>
-            </div>
-            <div class="field">
-              <label>Estimated active insulin</label>
-              <div class="soft compact-result"><strong id="estimatedIobOut">—</strong><span>U</span></div>
-            </div>
+            <div class="tiny iob-model-note">Curve uses a 10-minute onset delay and ~75-minute peak; entered active-insulin time controls the tail. Bolus purpose changes how the result is interpreted, not the pharmacologic amount remaining.</div>
           </div>
-          <div class="tiny iob-model-note">Curve uses a 10-minute onset delay and ~75-minute peak; entered active-insulin time controls the tail. Bolus purpose does not change how much insulin remains active, but it changes how the result should be interpreted.</div>
-        </div>
+        </details>
 
         <div class="mini-box">
           <div class="mini-title">Optional meal-dose modifiers</div>
@@ -137,14 +140,7 @@
           </div>
         </div>
 
-        <div class="mini-box tiny-controls">
-          <div class="field">
-            <label>Negative correction reduces meal dose</label>
-            <div class="seg tiny-toggle wide-toggle" id="negativeCorrectionSeg">
-              <button type="button" data-value="on" class="active"><strong>On</strong></button>
-              <button type="button" data-value="off"><strong>Off</strong></button>
-            </div>
-          </div>
+        <div class="mini-box tdd-box">
           <details class="inline-disclosure">
             <summary>TDD tools</summary>
             <div class="inline-body">
@@ -169,42 +165,50 @@
         <div id="warningBox" class="warningBox hidden"></div>
       </section>
 
-      <section class="panel compact-panel">
-        <div class="panel-title">Breakdown</div>
-        <div class="breakdown compact-breakdown">
-          <div class="row"><span>Meal</span><strong id="mealDoseOut">—</strong></div>
-          <div class="row"><span>Raw correction</span><strong id="rawCorrectionOut">—</strong></div>
-          <div class="row"><span>Active insulin used</span><strong id="iobOut">—</strong></div>
-          <div class="row"><span>Net correction</span><strong id="netCorrectionOut">—</strong></div>
-          <div class="row"><span>Base</span><strong id="baseBolusOut">—</strong></div>
-          <div class="row"><span>Exercise</span><strong id="activityAdjustmentOut">—</strong></div>
-          <div class="row"><span>Steroid</span><strong id="steroidAdjustmentOut">—</strong></div>
-          <div class="row total"><span>Pre-round</span><strong id="rawTotalOut">—</strong></div>
+      <details class="panel compact-panel collapsible-panel">
+        <summary class="compact-summary">
+          <span>Breakdown</span>
+          <span class="summary-hint">Tap to expand</span>
+        </summary>
+        <div class="collapsible-content">
+          <div class="breakdown compact-breakdown">
+            <div class="row"><span>Meal</span><strong id="mealDoseOut">—</strong></div>
+            <div class="row"><span>Raw correction</span><strong id="rawCorrectionOut">—</strong></div>
+            <div class="row"><span>Active insulin used</span><strong id="iobOut">—</strong></div>
+            <div class="row"><span>Net correction</span><strong id="netCorrectionOut">—</strong></div>
+            <div class="row"><span>Base</span><strong id="baseBolusOut">—</strong></div>
+            <div class="row"><span>Exercise</span><strong id="activityAdjustmentOut">—</strong></div>
+            <div class="row"><span>Steroid</span><strong id="steroidAdjustmentOut">—</strong></div>
+            <div class="row total"><span>Pre-round</span><strong id="rawTotalOut">—</strong></div>
+          </div>
         </div>
-      </section>
+      </details>
     </div>
   </section>
 
-  <section class="panel basal-panel">
-    <div class="basal-head">
-      <div>
-        <h2>Basal self-titration</h2>
-        <div class="sub">3 consecutive fasting morning BGs</div>
+  <details class="panel basal-panel collapsible-panel">
+    <summary class="compact-summary basal-summary">
+      <span>
+        <strong>Basal self-titration</strong>
+        <small>3 consecutive fasting morning BGs</small>
+      </span>
+      <span class="summary-hint">Tap to expand</span>
+    </summary>
+    <div class="collapsible-content">
+      <div class="tiny basal-default-note">Default step: 2 U</div>
+      <div class="basal-compact-grid">
+        <div class="field"><label>Fasting 1</label><div class="inputwrap"><input id="fasting1" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
+        <div class="field"><label>Fasting 2</label><div class="inputwrap"><input id="fasting2" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
+        <div class="field"><label>Fasting 3</label><div class="inputwrap"><input id="fasting3" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
+        <div class="field"><label>Current basal</label><div class="inputwrap"><input id="basalCurrentDose" type="text" inputmode="decimal"><span class="suffix">U/d</span></div></div>
+        <div class="field"><label>Step</label><div class="inputwrap"><input id="basalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div></div>
+        <div class="soft compact-result highlight"><span>Median</span><strong id="basalMedianOut">—</strong></div>
+        <div class="soft compact-result highlight"><span>Adjusted basal</span><strong id="basalRecommendedOut">—</strong></div>
       </div>
-      <div class="tiny">default step: 2 U</div>
+      <div id="basalExplanation" class="tiny basal-explain">Enter 3 fasting values + current basal dose.</div>
+      <div id="basalWarning" class="warningBox hidden"></div>
     </div>
-    <div class="basal-compact-grid">
-      <div class="field"><label>Fasting 1</label><div class="inputwrap"><input id="fasting1" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
-      <div class="field"><label>Fasting 2</label><div class="inputwrap"><input id="fasting2" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
-      <div class="field"><label>Fasting 3</label><div class="inputwrap"><input id="fasting3" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
-      <div class="field"><label>Current basal</label><div class="inputwrap"><input id="basalCurrentDose" type="text" inputmode="decimal"><span class="suffix">U/d</span></div></div>
-      <div class="field"><label>Step</label><div class="inputwrap"><input id="basalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div></div>
-      <div class="soft compact-result highlight"><span>Median</span><strong id="basalMedianOut">—</strong></div>
-      <div class="soft compact-result highlight"><span>Adjusted basal</span><strong id="basalRecommendedOut">—</strong></div>
-    </div>
-    <div id="basalExplanation" class="tiny basal-explain">Enter 3 fasting values + current basal dose.</div>
-    <div id="basalWarning" class="warningBox hidden"></div>
-  </section>
+  </details>
 
   <section class="bottom-grid">
     <details class="panel disclosure">
@@ -235,6 +239,6 @@
     </details>
   </section>
 </div>
-<script src="insulin_app.js?v=7"></script>
+<script src="insulin_app.js?v=8"></script>
 </body>
 </html>

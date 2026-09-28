@@ -339,3 +339,94 @@ input[type="text"] {
     font-size:9px;
   }
 }
+
+
+/* v8 — collapsible secondary sections */
+.collapsible-box,
+.collapsible-panel{
+  overflow:hidden;
+}
+
+.compact-summary{
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:38px;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.025em;
+}
+
+.compact-summary::-webkit-details-marker{
+  display:none;
+}
+
+.summary-hint{
+  flex:0 0 auto;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:600;
+  text-transform:none;
+  letter-spacing:0;
+}
+
+details[open] > .compact-summary .summary-hint::after{
+  content:"";
+}
+
+details[open] > .compact-summary .summary-hint{
+  font-size:0;
+}
+
+details[open] > .compact-summary .summary-hint::before{
+  content:"Tap to hide";
+  font-size:9px;
+}
+
+.collapsible-content{
+  padding-top:8px;
+}
+
+.section-caption{
+  margin-bottom:7px;
+}
+
+.tdd-box{
+  padding-top:7px;
+  padding-bottom:7px;
+}
+
+.basal-summary{
+  text-transform:none;
+  letter-spacing:0;
+}
+
+.basal-summary > span:first-child{
+  display:grid;
+  gap:2px;
+}
+
+.basal-summary strong{
+  font-size:15px;
+}
+
+.basal-summary small{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:500;
+}
+
+.basal-default-note{
+  text-align:right;
+  margin-bottom:5px;
+}
+
+@media(max-width:620px){
+  .compact-summary{
+    min-height:36px;
+  }
+}
