@@ -1,32 +1,27 @@
-Insulin Dose Calculator v1
+Insulin Dose Calculator v2
 
-Purpose
-- Mobile-first outpatient rapid-acting meal/correction bolus calculator.
-- Static GitHub Pages/PWA-style app with no server dependency.
+Changes from v1
+- Removed glucose-unit toggle; calculator now uses mg/dL only.
+- Removed rounding controls; final rapid-acting dose rounds to nearest whole unit.
+- Target glucose defaults to 120 mg/dL but remains editable.
+- Added activity adjustment toggle with editable reduction, default 20%.
+- Added corticosteroid adjustment toggle with editable rapid-acting increase, default 20%.
+  UI names examples such as prednisone and dexamethasone.
+- Added editable active-insulin time, default 4 hours.
+- Added recent rapid-acting insulin dose + hours-since-dose inputs.
+- Added estimated IOB using a transparent linear active-insulin approximation.
+- Manual IOB remains available as an override.
+- Added basal insulin self-titration helper using 3 consecutive fasting morning BGs.
+- Basal increment defaults to 2 units and remains editable.
+- Basal helper displays median fasting BG and recommended adjusted basal dose.
 
-Core calculator
-- Meal dose = carbohydrate grams / ICR
-- Correction dose = (current glucose - target glucose) / ISF
-- Positive correction IOB is subtracted only from the positive correction component.
-- Optional negative correction can reduce meal bolus.
-- Final dose is floored at 0 and rounded to 0.1, 0.5, or 1 unit.
-
-Features
-- Meal + correction, meal-only, and correction-only modes
-- mg/dL / mmol/L unit toggle with conversion
-- IOB input
-- Optional 500-rule ICR estimator and 1800-rule ISF estimator
-- Low-glucose and high-glucose flags
-- Saved clinician defaults stored locally
-- Case-specific current glucose, carbs, and IOB are not persisted
-- Dark/light system appearance
-- Offline service worker
-
-Clinical reference
-UCSF Diabetes Teaching Center:
-https://diabetesteachingcenter.ucsf.edu/about-diabetes/type-2-diabetes/use-insulin-type-2-diabetes/calculating-insulin-dose
+Basal titration rule
+- Median >120 mg/dL AND no value <80: increase by selected increment.
+- Median 100–120 mg/dL: no change.
+- Median <100 mg/dL OR any value <80: decrease by selected increment.
+- Any value <70 adds a hypoglycemia warning.
 
 Important
-This is a transparent clinical-reference calculator, not a substitute for individualized
-insulin settings, clinical judgment, device-specific bolus-calculator logic, or a patient's
-prescribed hypoglycemia/sick-day plan.
+- Activity and steroid percentages are configurable heuristics rather than universal dosing rules.
+- Recent-dose IOB uses a simple linear approximation and is not equivalent to a pump bolus calculator's pharmacodynamic model.
+- This is a clinician-oriented reference calculator, not a substitute for individualized insulin settings or clinical judgment.

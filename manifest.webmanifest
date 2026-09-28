@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#111315",
   "theme_color": "#111315",
-  "description": "Outpatient rapid-acting meal and correction bolus calculator."
+  "description": "Outpatient rapid-acting meal/correction bolus calculator with basal titration helper."
 }
