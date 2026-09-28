@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#111315">
 <title>Insulin Dose Calculator</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest?v=5">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 <div class="app">
@@ -48,7 +48,7 @@
           <div class="triple-fields">
             <div class="field">
               <label>Insulin:carb ratio</label>
-              <div class="inputwrap"><span class="prefix">1:</span><input id="icr" class="ratioinput" type="text" inputmode="decimal" placeholder="10"><span class="suffix">g/U</span></div>
+              <div class="inputwrap"><input id="icr" class="ratioinput" type="text" inputmode="decimal" placeholder="10"><span class="suffix">g/U</span></div>
             </div>
             <div class="field">
               <label>Insulin sensitivity</label>
@@ -200,7 +200,7 @@
       <summary><span>Saved defaults</span><span class="muted">optional</span></summary>
       <div class="details-body defaults-grid">
         <div class="field"><label>Target BG</label><div class="inputwrap"><input id="defaultTarget" type="text" inputmode="decimal" value="120"><span class="suffix">mg/dL</span></div></div>
-        <div class="field"><label>Insulin:carb ratio</label><div class="inputwrap"><span class="prefix">1:</span><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div></div>
+        <div class="field"><label>Insulin:carb ratio</label><div class="inputwrap"><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div></div>
         <div class="field"><label>Insulin sensitivity</label><div class="inputwrap"><input id="defaultIsf" type="text" inputmode="decimal"><span class="suffix">mg/dL/U</span></div></div>
         <div class="field"><label>Low BG alert</label><div class="inputwrap"><input id="lowThreshold" type="text" inputmode="decimal" value="70"><span class="suffix">mg/dL</span></div></div>
         <div class="field"><label>Active insulin time</label><div class="inputwrap"><input id="defaultActiveInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">h</span></div></div>
@@ -223,6 +223,6 @@
     </details>
   </section>
 </div>
-<script src="insulin_app.js?v=4"></script>
+<script src="insulin_app.js?v=5"></script>
 </body>
 </html>

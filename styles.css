@@ -140,3 +140,64 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-bg)}
     min-height:2.3em;
   }
 }
+
+
+/* v5 - layout consistency, no iOS zoom, icon refresh */
+html{
+  -webkit-text-size-adjust:100%;
+}
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
+.page-shell,
+.app-shell,
+.hero-card,
+.card,
+.section-card{
+  width:100%;
+  max-width:100%;
+}
+
+.hero-card,
+.card,
+.section-card{
+  margin-left:0;
+  margin-right:0;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea{
+  font-size:16px !important;
+  line-height:1.2;
+  -webkit-appearance:none;
+  appearance:none;
+  border-radius:18px;
+}
+
+.inputwrap input{
+  font-size:16px !important;
+}
+
+.prefix{
+  display:none !important;
+}
+
+@media (max-width: 700px){
+  .hero-card,
+  .card,
+  .section-card{
+    width:100% !important;
+  }
+  .button-row{
+    flex-wrap:wrap;
+  }
+  .button-row > *{
+    min-width:0;
+  }
+}
