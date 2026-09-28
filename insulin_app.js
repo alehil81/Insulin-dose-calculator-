@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const SETTINGS_KEY="insulin-dose-calculator-settings-v2";
+const SETTINGS_KEY="insulin-dose-calculator-settings-v3";
 
 const defaults={
   mode:"meal-correction",
@@ -76,8 +76,9 @@ function renderSettings(){
   $("defaultSteroidIncreasePct").value=settings.steroidIncreasePct;
   $("defaultBasalIncrement").value=settings.basalIncrement;
 
-  $("mealSection").classList.toggle("hidden",settings.mode==="correction");
-  $("correctionSection").classList.toggle("hidden",settings.mode==="meal");
+  $("carbField").classList.toggle("hidden",settings.mode==="correction");
+  $("currentBgField").classList.toggle("hidden",settings.mode==="meal");
+  $("targetBgField").classList.toggle("hidden",settings.mode==="meal");
   calculate();
   calculateBasal();
 }

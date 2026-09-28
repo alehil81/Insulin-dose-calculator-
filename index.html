@@ -6,333 +6,227 @@
 <meta name="theme-color" content="#111315">
 <title>Insulin Dose Calculator</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <div class="app">
   <header class="panel topbar">
-    <div>
-      <h1>Insulin Dose Calculator</h1>
-      <div class="sub">Outpatient rapid-acting meal + correction bolus calculator with basal titration helper</div>
-      <div class="saved" id="savedStatus">Settings stored locally</div>
+    <div class="brand">
+      <img src="icon.svg" class="app-icon" alt="">
+      <div>
+        <h1>Insulin Dose Calculator</h1>
+        <div class="sub">Rapid-acting bolus + basal titration helper</div>
+        <div class="saved" id="savedStatus">Settings stored locally</div>
+      </div>
     </div>
     <div class="actions">
-      <button class="btn" id="saveSettings">Save settings</button>
-      <button class="btn" id="clearCase">Clear case</button>
-      <button class="btn danger" id="resetSettings">Reset settings</button>
+      <button class="btn" id="saveSettings">Save</button>
+      <button class="btn" id="clearCase">Clear</button>
+      <button class="btn danger" id="resetSettings">Reset</button>
     </div>
   </header>
 
-  <section class="panel">
-    <div class="section-title-row">
-      <div>
-        <h2>Calculation mode</h2>
-        <div class="sub">Choose which rapid-acting bolus components to calculate.</div>
+  <section class="main-grid">
+    <div class="panel calculator-panel">
+      <div class="calc-head">
+        <div>
+          <h2>Rapid-acting dose</h2>
+          <div class="sub">mg/dL · final dose rounded to 1 U</div>
+        </div>
+        <div class="seg mode-seg" id="modeSeg">
+          <button type="button" data-mode="meal-correction" class="active"><strong>Meal + Corr</strong></button>
+          <button type="button" data-mode="meal"><strong>Meal</strong></button>
+          <button type="button" data-mode="correction"><strong>Corr</strong></button>
+        </div>
       </div>
-    </div>
-    <div class="seg three" id="modeSeg">
-      <button type="button" data-mode="meal-correction" class="active"><strong>Meal + correction</strong><span>Carbs + glucose</span></button>
-      <button type="button" data-mode="meal"><strong>Meal only</strong><span>Carbohydrate coverage</span></button>
-      <button type="button" data-mode="correction"><strong>Correction only</strong><span>Glucose correction</span></button>
-    </div>
-  </section>
 
-  <section class="twocol">
-    <div class="stack">
-      <section class="panel">
-        <div class="section-title-row">
-          <div>
-            <h2>Rapid-acting dose inputs</h2>
-            <div class="sub">All glucose values are mg/dL. Case-specific values are not saved.</div>
-          </div>
-        </div>
-
-        <div class="input-section" id="mealSection">
-          <div class="input-section-title">Meal</div>
-          <div class="fields">
+      <div class="compact-boxes">
+        <div class="mini-box">
+          <div class="mini-title">Dose settings</div>
+          <div class="triple-fields">
             <div class="field">
-              <label>Carbohydrate</label>
-              <div class="inputwrap"><input id="carbs" type="text" inputmode="decimal" placeholder="e.g. 60"><span class="suffix">g</span></div>
+              <label>ICR</label>
+              <div class="inputwrap"><span class="prefix">1:</span><input id="icr" class="ratioinput" type="text" inputmode="decimal" placeholder="10"><span class="suffix">g/U</span></div>
             </div>
             <div class="field">
-              <label>Insulin-to-carb ratio (ICR)</label>
-              <div class="inputwrap"><span class="prefix">1:</span><input id="icr" class="ratioinput" type="text" inputmode="decimal" placeholder="e.g. 10"><span class="suffix">g/U</span></div>
+              <label>ISF</label>
+              <div class="inputwrap"><input id="isf" type="text" inputmode="decimal" placeholder="40"><span class="suffix">mg/dL/U</span></div>
+            </div>
+            <div class="field">
+              <label>AIT</label>
+              <div class="inputwrap"><input id="activeInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">h</span></div>
             </div>
           </div>
         </div>
 
-        <div class="input-section" id="correctionSection">
-          <div class="input-section-title">Correction</div>
-          <div class="fields">
-            <div class="field">
-              <label>Current glucose</label>
-              <div class="inputwrap"><input id="currentGlucose" type="text" inputmode="decimal" placeholder="e.g. 220"><span class="suffix">mg/dL</span></div>
+        <div class="mini-box">
+          <div class="mini-title">Current dose inputs</div>
+          <div class="triple-fields">
+            <div class="field" id="carbField">
+              <label>Carbs</label>
+              <div class="inputwrap"><input id="carbs" type="text" inputmode="decimal" placeholder="60"><span class="suffix">g</span></div>
             </div>
-            <div class="field">
-              <label>Target glucose</label>
+            <div class="field" id="currentBgField">
+              <label>Current BG</label>
+              <div class="inputwrap"><input id="currentGlucose" type="text" inputmode="decimal" placeholder="220"><span class="suffix">mg/dL</span></div>
+            </div>
+            <div class="field" id="targetBgField">
+              <label>Target BG</label>
               <div class="inputwrap"><input id="targetGlucose" type="text" inputmode="decimal" value="120"><span class="suffix">mg/dL</span></div>
             </div>
+          </div>
+        </div>
+
+        <div class="mini-box">
+          <div class="mini-title-row">
+            <div class="mini-title">Recent bolus / IOB</div>
+            <div class="tiny">manual IOB overrides estimate</div>
+          </div>
+          <div class="quad-fields">
             <div class="field">
-              <label>Correction factor / ISF</label>
-              <div class="inputwrap"><input id="isf" type="text" inputmode="decimal" placeholder="e.g. 40"><span class="suffix">mg/dL/U</span></div>
+              <label>Recent dose</label>
+              <div class="inputwrap"><input id="recentDose" type="text" inputmode="decimal"><span class="suffix">U</span></div>
             </div>
             <div class="field">
-              <label>Negative correction can reduce meal bolus</label>
-              <div class="seg compact" id="negativeCorrectionSeg">
-                <button type="button" data-value="on" class="active"><strong>On</strong></button>
-                <button type="button" data-value="off"><strong>Off</strong></button>
-              </div>
+              <label>Hours ago</label>
+              <div class="inputwrap"><input id="hoursSinceDose" type="text" inputmode="decimal"><span class="suffix">h</span></div>
+            </div>
+            <div class="field">
+              <label>Est. IOB</label>
+              <div class="soft compact-result"><strong id="estimatedIobOut">—</strong><span>U</span></div>
+            </div>
+            <div class="field">
+              <label>Manual IOB</label>
+              <div class="inputwrap"><input id="manualIob" type="text" inputmode="decimal"><span class="suffix">U</span></div>
             </div>
           </div>
         </div>
 
-        <div class="input-section">
-          <div class="input-section-title">Recent rapid-acting insulin / active insulin</div>
-          <div class="fields">
-            <div class="field">
-              <label>Active insulin time</label>
-              <div class="inputwrap"><input id="activeInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">hours</span></div>
-            </div>
-            <div class="field">
-              <label>Most recent rapid-acting dose</label>
-              <div class="inputwrap"><input id="recentDose" type="text" inputmode="decimal" placeholder="optional"><span class="suffix">U</span></div>
-            </div>
-            <div class="field">
-              <label>Hours since recent dose</label>
-              <div class="inputwrap"><input id="hoursSinceDose" type="text" inputmode="decimal" placeholder="e.g. 2"><span class="suffix">hours</span></div>
-            </div>
-            <div class="field">
-              <label>Estimated active insulin remaining</label>
-              <div class="soft result-inline"><strong id="estimatedIobOut">—</strong><span>U</span></div>
-            </div>
-            <div class="field span-2">
-              <label>Manual active insulin / IOB override (optional)</label>
-              <div class="inputwrap"><input id="manualIob" type="text" inputmode="decimal" placeholder="Leave blank to use recent-dose estimate"><span class="suffix">U</span></div>
-            </div>
-          </div>
-          <div class="tiny note">Recent-dose IOB is a simple linear estimate over the selected active-insulin time. A manual IOB value overrides that estimate.</div>
-        </div>
-
-        <div class="input-section">
-          <div class="input-section-title">Optional dose adjustments</div>
-          <div class="adjustment-card">
-            <div class="adjustment-head">
-              <div>
-                <strong>Activity adjustment</strong>
-                <div class="tiny">Reduce the calculated rapid-acting dose for planned/ongoing activity.</div>
+        <div class="mini-box">
+          <div class="mini-title">Optional meal-dose modifiers</div>
+          <div class="modifier-grid">
+            <div class="modifier">
+              <div class="modifier-top">
+                <div><strong>Exercise</strong><div class="tiny">reduce dose</div></div>
+                <div class="seg tiny-toggle" id="activityToggle">
+                  <button type="button" data-value="on"><strong>On</strong></button>
+                  <button type="button" data-value="off" class="active"><strong>Off</strong></button>
+                </div>
               </div>
-              <div class="seg compact mini-toggle" id="activityToggle">
-                <button type="button" data-value="on"><strong>On</strong></button>
-                <button type="button" data-value="off" class="active"><strong>Off</strong></button>
-              </div>
+              <div class="inputwrap compact-pct"><input id="activityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">% ↓</span></div>
             </div>
-            <div class="field adjustment-pct">
-              <label>Dose reduction</label>
-              <div class="inputwrap"><input id="activityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div>
-            </div>
-          </div>
-
-          <div class="adjustment-card">
-            <div class="adjustment-head">
-              <div>
-                <strong>Ongoing corticosteroid adjustment</strong>
-                <div class="tiny">For corticosteroids such as prednisone or dexamethasone. The effect varies by agent, dose, timing, and duration.</div>
+            <div class="modifier">
+              <div class="modifier-top">
+                <div><strong>Corticosteroid</strong><div class="tiny">prednisone / dexamethasone</div></div>
+                <div class="seg tiny-toggle" id="steroidToggle">
+                  <button type="button" data-value="on"><strong>On</strong></button>
+                  <button type="button" data-value="off" class="active"><strong>Off</strong></button>
+                </div>
               </div>
-              <div class="seg compact mini-toggle" id="steroidToggle">
-                <button type="button" data-value="on"><strong>On</strong></button>
-                <button type="button" data-value="off" class="active"><strong>Off</strong></button>
-              </div>
-            </div>
-            <div class="field adjustment-pct">
-              <label>Rapid-acting dose increase</label>
-              <div class="inputwrap"><input id="steroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div>
+              <div class="inputwrap compact-pct"><input id="steroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">% ↑</span></div>
             </div>
           </div>
         </div>
 
-        <details class="disclosure">
-          <summary><span>Optional TDD estimators</span><span class="muted">500 / 1800 rules</span></summary>
-          <div class="details-body">
-            <div class="fields">
-              <div class="field">
-                <label>Total daily insulin dose (TDD)</label>
-                <div class="inputwrap"><input id="tdd" type="text" inputmode="decimal" placeholder="e.g. 40"><span class="suffix">U/day</span></div>
-              </div>
-              <div class="field">
-                <label>Estimated ICR</label>
-                <div class="soft result-inline"><strong id="estIcr">—</strong><span>g/U</span></div>
-              </div>
-              <div class="field">
-                <label>Estimated ISF</label>
-                <div class="soft result-inline"><strong id="estIsf">—</strong><span>mg/dL/U</span></div>
-              </div>
-              <div class="field estimator-actions">
-                <button class="btn" id="useIcrEstimate" type="button">Use estimated ICR</button>
-                <button class="btn" id="useIsfEstimate" type="button">Use estimated ISF</button>
+        <div class="mini-box tiny-controls">
+          <div class="field">
+            <label>Negative correction reduces meal dose</label>
+            <div class="seg tiny-toggle wide-toggle" id="negativeCorrectionSeg">
+              <button type="button" data-value="on" class="active"><strong>On</strong></button>
+              <button type="button" data-value="off"><strong>Off</strong></button>
+            </div>
+          </div>
+          <details class="inline-disclosure">
+            <summary>TDD tools</summary>
+            <div class="inline-body">
+              <div class="tdd-row">
+                <div class="field"><label>TDD</label><div class="inputwrap"><input id="tdd" type="text" inputmode="decimal"><span class="suffix">U/d</span></div></div>
+                <div class="soft compact-result"><span>ICR</span><strong id="estIcr">—</strong></div>
+                <div class="soft compact-result"><span>ISF</span><strong id="estIsf">—</strong></div>
+                <button class="btn btn-sm" id="useIcrEstimate" type="button">Use ICR</button>
+                <button class="btn btn-sm" id="useIsfEstimate" type="button">Use ISF</button>
               </div>
             </div>
-            <div class="tiny note">Population-based starting estimates only: ICR = 500 ÷ TDD; rapid-acting ISF = 1800 ÷ TDD.</div>
-          </div>
-        </details>
-      </section>
-
-      <section class="panel">
-        <div class="section-title-row">
-          <div>
-            <h2>Basal insulin self-titration helper</h2>
-            <div class="sub">Uses the most recent 3 consecutive fasting morning glucose values.</div>
-          </div>
+          </details>
         </div>
-
-        <div class="input-section basal-box">
-          <div class="fields three-readings">
-            <div class="field">
-              <label>Fasting BG — Day 1</label>
-              <div class="inputwrap"><input id="fasting1" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div>
-            </div>
-            <div class="field">
-              <label>Fasting BG — Day 2</label>
-              <div class="inputwrap"><input id="fasting2" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div>
-            </div>
-            <div class="field">
-              <label>Fasting BG — Day 3</label>
-              <div class="inputwrap"><input id="fasting3" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div>
-            </div>
-          </div>
-
-          <div class="fields basal-controls">
-            <div class="field">
-              <label>Current long-acting insulin dose</label>
-              <div class="inputwrap"><input id="basalCurrentDose" type="text" inputmode="decimal"><span class="suffix">U/day</span></div>
-            </div>
-            <div class="field">
-              <label>Adjustment increment</label>
-              <div class="inputwrap"><input id="basalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div>
-            </div>
-          </div>
-
-          <div class="basal-result-grid">
-            <div class="soft">
-              <div class="tiny">MEDIAN FASTING BG</div>
-              <div class="metric-sm" id="basalMedianOut">—</div>
-            </div>
-            <div class="soft">
-              <div class="tiny">RECOMMENDED ADJUSTED BASAL DOSE</div>
-              <div class="metric-sm" id="basalRecommendedOut">—</div>
-            </div>
-          </div>
-          <div id="basalExplanation" class="tiny note">Enter all three fasting values and the current basal dose.</div>
-          <div id="basalWarning" class="warningBox hidden"></div>
-        </div>
-
-        <details class="disclosure">
-          <summary><span>Basal titration rule used</span><span class="muted">Tap to expand</span></summary>
-          <div class="details-body">
-            <div class="tiny">
-              Uses the median of 3 consecutive fasting glucose values: median &gt;120 mg/dL with no value &lt;80 → increase by the selected increment; median 100–120 → no change; median &lt;100 or any value &lt;80 → decrease by the selected increment. This is a general adult outpatient titration helper and should be used only when appropriate for an individualized clinician-approved plan.
-            </div>
-          </div>
-        </details>
-      </section>
-
-      <section class="panel">
-        <details class="disclosure">
-          <summary><span>Saved clinician defaults</span><span class="muted">Local device only</span></summary>
-          <div class="details-body">
-            <div class="fields">
-              <div class="field">
-                <label>Default target glucose</label>
-                <div class="inputwrap"><input id="defaultTarget" type="text" inputmode="decimal" value="120"><span class="suffix">mg/dL</span></div>
-              </div>
-              <div class="field">
-                <label>Default ICR</label>
-                <div class="inputwrap"><span class="prefix">1:</span><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div>
-              </div>
-              <div class="field">
-                <label>Default ISF</label>
-                <div class="inputwrap"><input id="defaultIsf" type="text" inputmode="decimal"><span class="suffix">mg/dL/U</span></div>
-              </div>
-              <div class="field">
-                <label>Low-glucose alert threshold</label>
-                <div class="inputwrap"><input id="lowThreshold" type="text" inputmode="decimal" value="70"><span class="suffix">mg/dL</span></div>
-              </div>
-              <div class="field">
-                <label>Default active insulin time</label>
-                <div class="inputwrap"><input id="defaultActiveInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">hours</span></div>
-              </div>
-              <div class="field">
-                <label>Default activity reduction</label>
-                <div class="inputwrap"><input id="defaultActivityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div>
-              </div>
-              <div class="field">
-                <label>Default steroid increase</label>
-                <div class="inputwrap"><input id="defaultSteroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div>
-              </div>
-              <div class="field">
-                <label>Default basal increment</label>
-                <div class="inputwrap"><input id="defaultBasalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div>
-              </div>
-            </div>
-            <div class="tiny note">Only calculator settings are saved. Current glucose, carbohydrate, recent insulin dose, fasting values, and other case-specific values are not persisted.</div>
-          </div>
-        </details>
-      </section>
+      </div>
     </div>
 
-    <div class="stack">
+    <div class="stack result-stack">
       <section class="panel hero-result">
-        <div class="tiny caps">CALCULATED RAPID-ACTING BOLUS</div>
+        <div class="tiny caps">RAPID-ACTING BOLUS</div>
         <div class="dose" id="finalDose">—</div>
-        <div class="muted" id="doseSub">Enter the required inputs</div>
+        <div class="muted" id="doseSub">Enter required inputs</div>
         <div id="warningBox" class="warningBox hidden"></div>
       </section>
 
-      <section class="panel">
-        <h2>Dose breakdown</h2>
-        <div class="breakdown">
-          <div class="row"><span>Meal bolus</span><strong id="mealDoseOut">—</strong></div>
-          <div class="row"><span>Raw correction</span><strong id="rawCorrectionOut">—</strong></div>
+      <section class="panel compact-panel">
+        <div class="panel-title">Breakdown</div>
+        <div class="breakdown compact-breakdown">
+          <div class="row"><span>Meal</span><strong id="mealDoseOut">—</strong></div>
+          <div class="row"><span>Raw corr</span><strong id="rawCorrectionOut">—</strong></div>
           <div class="row"><span>IOB used</span><strong id="iobOut">—</strong></div>
-          <div class="row"><span>Correction after IOB</span><strong id="netCorrectionOut">—</strong></div>
-          <div class="row"><span>Base bolus before modifiers</span><strong id="baseBolusOut">—</strong></div>
-          <div class="row"><span>Activity adjustment</span><strong id="activityAdjustmentOut">—</strong></div>
-          <div class="row"><span>Corticosteroid adjustment</span><strong id="steroidAdjustmentOut">—</strong></div>
-          <div class="row total"><span>Pre-round total</span><strong id="rawTotalOut">—</strong></div>
+          <div class="row"><span>Net corr</span><strong id="netCorrectionOut">—</strong></div>
+          <div class="row"><span>Base</span><strong id="baseBolusOut">—</strong></div>
+          <div class="row"><span>Exercise</span><strong id="activityAdjustmentOut">—</strong></div>
+          <div class="row"><span>Steroid</span><strong id="steroidAdjustmentOut">—</strong></div>
+          <div class="row total"><span>Pre-round</span><strong id="rawTotalOut">—</strong></div>
         </div>
-      </section>
-
-      <section class="panel">
-        <details class="disclosure" open>
-          <summary><span>Formula</span><span class="muted">Transparent math</span></summary>
-          <div class="details-body formulas">
-            <div><strong>Meal dose</strong><br>carbohydrate grams ÷ ICR</div>
-            <div><strong>Correction dose</strong><br>(current glucose − target glucose) ÷ ISF</div>
-            <div><strong>Active insulin</strong><br>manual IOB override, or a simple linear estimate from the recent rapid-acting dose over the selected active-insulin time</div>
-            <div><strong>Activity modifier</strong><br>optional percentage reduction applied to the base bolus</div>
-            <div><strong>Corticosteroid modifier</strong><br>optional percentage increase applied after the activity modifier</div>
-            <div><strong>Final dose</strong><br>rounded to the nearest whole unit</div>
-          </div>
-        </details>
-      </section>
-
-      <section class="panel">
-        <details class="disclosure">
-          <summary><span>Clinical notes & references</span><span class="muted">Tap to expand</span></summary>
-          <div class="details-body">
-            <p class="tiny">This is a transparent clinical-reference calculator, not a substitute for individualized insulin settings, clinical judgment, device-specific bolus-calculator logic, or a patient's prescribed hypoglycemia, exercise, steroid, or sick-day plan.</p>
-            <p class="tiny">The activity and corticosteroid percentages are editable heuristics. Exercise-related bolus reductions vary substantially with timing and intensity. Glucocorticoid-related insulin needs vary with the steroid agent, dose, timing, and duration.</p>
-            <p class="tiny">The basal titration helper uses a published adult type 2 diabetes approach based on the median of 3 consecutive fasting glucose values and a default 2-unit adjustment.</p>
-            <p class="tiny refs">
-              <a href="https://diabetesteachingcenter.ucsf.edu/about-diabetes/type-2-diabetes/use-insulin-type-2-diabetes/calculating-insulin-dose" target="_blank" rel="noopener">UCSF — Calculating Insulin Dose</a><br>
-              <a href="https://diabetesjournals.org/care/article/48/5/671/158024/The-Modern-Role-of-Basal-Insulin-in-Advancing" target="_blank" rel="noopener">Diabetes Care — Modern Role of Basal Insulin</a><br>
-              <a href="https://diabetesjournals.org/care/article/49/Supplement_1/S183/163934/9-Pharmacologic-Approaches-to-Glycemic-Treatment" target="_blank" rel="noopener">ADA Standards of Care 2026 — Pharmacologic Approaches</a>
-            </p>
-          </div>
-        </details>
       </section>
     </div>
   </section>
+
+  <section class="panel basal-panel">
+    <div class="basal-head">
+      <div>
+        <h2>Basal self-titration</h2>
+        <div class="sub">3 consecutive fasting morning BGs</div>
+      </div>
+      <div class="tiny">default step: 2 U</div>
+    </div>
+    <div class="basal-compact-grid">
+      <div class="field"><label>Fasting 1</label><div class="inputwrap"><input id="fasting1" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
+      <div class="field"><label>Fasting 2</label><div class="inputwrap"><input id="fasting2" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
+      <div class="field"><label>Fasting 3</label><div class="inputwrap"><input id="fasting3" type="text" inputmode="decimal"><span class="suffix">mg/dL</span></div></div>
+      <div class="field"><label>Current basal</label><div class="inputwrap"><input id="basalCurrentDose" type="text" inputmode="decimal"><span class="suffix">U/d</span></div></div>
+      <div class="field"><label>Step</label><div class="inputwrap"><input id="basalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div></div>
+      <div class="soft compact-result highlight"><span>Median</span><strong id="basalMedianOut">—</strong></div>
+      <div class="soft compact-result highlight"><span>Adjusted basal</span><strong id="basalRecommendedOut">—</strong></div>
+    </div>
+    <div id="basalExplanation" class="tiny basal-explain">Enter 3 fasting values + current basal dose.</div>
+    <div id="basalWarning" class="warningBox hidden"></div>
+  </section>
+
+  <section class="bottom-grid">
+    <details class="panel disclosure">
+      <summary><span>Saved defaults</span><span class="muted">optional</span></summary>
+      <div class="details-body defaults-grid">
+        <div class="field"><label>Target BG</label><div class="inputwrap"><input id="defaultTarget" type="text" inputmode="decimal" value="120"><span class="suffix">mg/dL</span></div></div>
+        <div class="field"><label>ICR</label><div class="inputwrap"><span class="prefix">1:</span><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div></div>
+        <div class="field"><label>ISF</label><div class="inputwrap"><input id="defaultIsf" type="text" inputmode="decimal"><span class="suffix">mg/dL/U</span></div></div>
+        <div class="field"><label>Low BG alert</label><div class="inputwrap"><input id="lowThreshold" type="text" inputmode="decimal" value="70"><span class="suffix">mg/dL</span></div></div>
+        <div class="field"><label>AIT</label><div class="inputwrap"><input id="defaultActiveInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">h</span></div></div>
+        <div class="field"><label>Exercise reduction</label><div class="inputwrap"><input id="defaultActivityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div></div>
+        <div class="field"><label>Steroid increase</label><div class="inputwrap"><input id="defaultSteroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div></div>
+        <div class="field"><label>Basal step</label><div class="inputwrap"><input id="defaultBasalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div></div>
+      </div>
+    </details>
+
+    <details class="panel disclosure">
+      <summary><span>Clinical notes</span><span class="muted">formula + cautions</span></summary>
+      <div class="details-body formulas">
+        <div><strong>Meal</strong> = carbs ÷ ICR</div>
+        <div><strong>Correction</strong> = (BG − target) ÷ ISF</div>
+        <div><strong>IOB</strong> = manual override or linear estimate from recent bolus over AIT</div>
+        <div><strong>Modifiers</strong> = optional exercise reduction and corticosteroid increase</div>
+        <div><strong>Basal helper</strong> uses the median of 3 fasting BGs and the selected step.</div>
+        <div class="tiny">Clinical-reference calculator only. Individualize ICR, ISF, AIT, activity, corticosteroid, and basal-titration settings.</div>
+      </div>
+    </details>
+  </section>
 </div>
-<script src="insulin_app.js?v=2"></script>
+<script src="insulin_app.js?v=3"></script>
 </body>
 </html>
