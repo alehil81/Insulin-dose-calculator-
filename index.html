@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <div class="app">
@@ -36,9 +36,9 @@
           <div class="sub">mg/dL · final dose rounded to 1 U</div>
         </div>
         <div class="seg mode-seg" id="modeSeg">
-          <button type="button" data-mode="meal-correction" class="active"><strong>Meal + Corr</strong></button>
+          <button type="button" data-mode="meal-correction" class="active"><strong>Meal + Correction</strong></button>
           <button type="button" data-mode="meal"><strong>Meal</strong></button>
-          <button type="button" data-mode="correction"><strong>Corr</strong></button>
+          <button type="button" data-mode="correction"><strong>Correction</strong></button>
         </div>
       </div>
 
@@ -47,15 +47,15 @@
           <div class="mini-title">Dose settings</div>
           <div class="triple-fields">
             <div class="field">
-              <label>ICR</label>
+              <label>Insulin:carb ratio</label>
               <div class="inputwrap"><span class="prefix">1:</span><input id="icr" class="ratioinput" type="text" inputmode="decimal" placeholder="10"><span class="suffix">g/U</span></div>
             </div>
             <div class="field">
-              <label>ISF</label>
+              <label>Insulin sensitivity</label>
               <div class="inputwrap"><input id="isf" type="text" inputmode="decimal" placeholder="40"><span class="suffix">mg/dL/U</span></div>
             </div>
             <div class="field">
-              <label>AIT</label>
+              <label>Active insulin time</label>
               <div class="inputwrap"><input id="activeInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">h</span></div>
             </div>
           </div>
@@ -81,10 +81,10 @@
 
         <div class="mini-box">
           <div class="mini-title-row">
-            <div class="mini-title">Recent bolus / IOB</div>
-            <div class="tiny">manual IOB overrides estimate</div>
+            <div class="mini-title">Recent bolus / active insulin</div>
+            <div class="tiny">estimated from recent rapid-acting dose</div>
           </div>
-          <div class="quad-fields">
+          <div class="triple-fields recent-insulin-fields">
             <div class="field">
               <label>Recent dose</label>
               <div class="inputwrap"><input id="recentDose" type="text" inputmode="decimal"><span class="suffix">U</span></div>
@@ -94,12 +94,8 @@
               <div class="inputwrap"><input id="hoursSinceDose" type="text" inputmode="decimal"><span class="suffix">h</span></div>
             </div>
             <div class="field">
-              <label>Est. IOB</label>
+              <label>Estimated active insulin</label>
               <div class="soft compact-result"><strong id="estimatedIobOut">—</strong><span>U</span></div>
-            </div>
-            <div class="field">
-              <label>Manual IOB</label>
-              <div class="inputwrap"><input id="manualIob" type="text" inputmode="decimal"><span class="suffix">U</span></div>
             </div>
           </div>
         </div>
@@ -143,10 +139,10 @@
             <div class="inline-body">
               <div class="tdd-row">
                 <div class="field"><label>TDD</label><div class="inputwrap"><input id="tdd" type="text" inputmode="decimal"><span class="suffix">U/d</span></div></div>
-                <div class="soft compact-result"><span>ICR</span><strong id="estIcr">—</strong></div>
-                <div class="soft compact-result"><span>ISF</span><strong id="estIsf">—</strong></div>
-                <button class="btn btn-sm" id="useIcrEstimate" type="button">Use ICR</button>
-                <button class="btn btn-sm" id="useIsfEstimate" type="button">Use ISF</button>
+                <div class="soft compact-result"><span>Insulin:carb</span><strong id="estIcr">—</strong></div>
+                <div class="soft compact-result"><span>Sensitivity</span><strong id="estIsf">—</strong></div>
+                <button class="btn btn-sm" id="useIcrEstimate" type="button">Use insulin:carb</button>
+                <button class="btn btn-sm" id="useIsfEstimate" type="button">Use sensitivity</button>
               </div>
             </div>
           </details>
@@ -166,9 +162,9 @@
         <div class="panel-title">Breakdown</div>
         <div class="breakdown compact-breakdown">
           <div class="row"><span>Meal</span><strong id="mealDoseOut">—</strong></div>
-          <div class="row"><span>Raw corr</span><strong id="rawCorrectionOut">—</strong></div>
+          <div class="row"><span>Raw correction</span><strong id="rawCorrectionOut">—</strong></div>
           <div class="row"><span>IOB used</span><strong id="iobOut">—</strong></div>
-          <div class="row"><span>Net corr</span><strong id="netCorrectionOut">—</strong></div>
+          <div class="row"><span>Net correction</span><strong id="netCorrectionOut">—</strong></div>
           <div class="row"><span>Base</span><strong id="baseBolusOut">—</strong></div>
           <div class="row"><span>Exercise</span><strong id="activityAdjustmentOut">—</strong></div>
           <div class="row"><span>Steroid</span><strong id="steroidAdjustmentOut">—</strong></div>
@@ -204,10 +200,10 @@
       <summary><span>Saved defaults</span><span class="muted">optional</span></summary>
       <div class="details-body defaults-grid">
         <div class="field"><label>Target BG</label><div class="inputwrap"><input id="defaultTarget" type="text" inputmode="decimal" value="120"><span class="suffix">mg/dL</span></div></div>
-        <div class="field"><label>ICR</label><div class="inputwrap"><span class="prefix">1:</span><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div></div>
-        <div class="field"><label>ISF</label><div class="inputwrap"><input id="defaultIsf" type="text" inputmode="decimal"><span class="suffix">mg/dL/U</span></div></div>
+        <div class="field"><label>Insulin:carb ratio</label><div class="inputwrap"><span class="prefix">1:</span><input id="defaultIcr" class="ratioinput" type="text" inputmode="decimal"><span class="suffix">g/U</span></div></div>
+        <div class="field"><label>Insulin sensitivity</label><div class="inputwrap"><input id="defaultIsf" type="text" inputmode="decimal"><span class="suffix">mg/dL/U</span></div></div>
         <div class="field"><label>Low BG alert</label><div class="inputwrap"><input id="lowThreshold" type="text" inputmode="decimal" value="70"><span class="suffix">mg/dL</span></div></div>
-        <div class="field"><label>AIT</label><div class="inputwrap"><input id="defaultActiveInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">h</span></div></div>
+        <div class="field"><label>Active insulin time</label><div class="inputwrap"><input id="defaultActiveInsulinTime" type="text" inputmode="decimal" value="4"><span class="suffix">h</span></div></div>
         <div class="field"><label>Exercise reduction</label><div class="inputwrap"><input id="defaultActivityReductionPct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div></div>
         <div class="field"><label>Steroid increase</label><div class="inputwrap"><input id="defaultSteroidIncreasePct" type="text" inputmode="decimal" value="20"><span class="suffix">%</span></div></div>
         <div class="field"><label>Basal step</label><div class="inputwrap"><input id="defaultBasalIncrement" type="text" inputmode="decimal" value="2"><span class="suffix">U</span></div></div>
@@ -218,8 +214,8 @@
       <summary><span>Clinical notes</span><span class="muted">formula + cautions</span></summary>
       <div class="details-body formulas">
         <div><strong>Meal</strong> = carbs ÷ ICR</div>
-        <div><strong>Correction</strong> = (BG − target) ÷ ISF</div>
-        <div><strong>IOB</strong> = manual override or linear estimate from recent bolus over AIT</div>
+        <div><strong>Correction</strong> = (BG − target) ÷ insulin sensitivity</div>
+        <div><strong>Active insulin</strong> = linear estimate from recent bolus over the active insulin time</div>
         <div><strong>Modifiers</strong> = optional exercise reduction and corticosteroid increase</div>
         <div><strong>Basal helper</strong> uses the median of 3 fasting BGs and the selected step.</div>
         <div class="tiny">Clinical-reference calculator only. Individualize ICR, ISF, AIT, activity, corticosteroid, and basal-titration settings.</div>
@@ -227,6 +223,6 @@
     </details>
   </section>
 </div>
-<script src="insulin_app.js?v=3"></script>
+<script src="insulin_app.js?v=4"></script>
 </body>
 </html>

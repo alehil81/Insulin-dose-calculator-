@@ -1,26 +1,23 @@
-Insulin Dose Calculator v3 — compact redesign
+Insulin Dose Calculator v4
 
-Main UI changes
-- Added a custom insulin/glucose app icon (SVG, 192px, 512px, Apple touch icon).
-- ICR, ISF, and AIT are grouped together in one compact "Dose settings" box.
-- Current BG, target BG, and carbs are grouped together in one compact input box.
-- Exercise and corticosteroid dose adjustments are grouped side-by-side in one optional modifier box.
-- Recent bolus / IOB is compressed into one compact row.
-- TDD estimators are moved into a small expandable control.
-- Basal self-titration is compressed into a single horizontal/compact panel.
-- Saved defaults and clinical notes are collapsed by default.
-- Smaller typography, tighter spacing, more side-by-side fields, and shorter abbreviations reduce scrolling substantially.
-- Existing v2 calculation logic is preserved.
+Changes from v3
+- Fixed iPhone Safari focus zoom by using 16px text size for inputs on mobile.
+- Expanded abbreviations in the main interface:
+  * Meal + Correction
+  * Correction
+  * Insulin:carb ratio
+  * Insulin sensitivity
+  * Active insulin time
+- Removed manual IOB input entirely.
+- Active insulin is now estimated only from the most recent rapid-acting dose,
+  hours since dose, and the entered active insulin time.
+- Updated dose-breakdown and TDD labels to use clearer wording.
+- Preserved the compact v3 layout and all existing calculations otherwise.
 
-Icon renderer used: cairosvg
-
-Files
+Files to replace on GitHub Pages
 - index.html
 - styles.css
 - insulin_app.js
-- manifest.webmanifest
 - sw.js
-- icon.svg
-- icon-192.png
-- icon-512.png
-- apple-touch-icon.png
+
+The icon files and manifest are unchanged but are included in the package.

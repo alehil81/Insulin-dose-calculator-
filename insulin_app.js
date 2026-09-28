@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const SETTINGS_KEY="insulin-dose-calculator-settings-v3";
+const SETTINGS_KEY="insulin-dose-calculator-settings-v4";
 
 const defaults={
   mode:"meal-correction",
@@ -96,7 +96,7 @@ function applySavedDefaults(force=false){
 }
 
 function clearCase(){
-  ["carbs","currentGlucose","icr","isf","recentDose","hoursSinceDose","manualIob","tdd",
+  ["carbs","currentGlucose","icr","isf","recentDose","hoursSinceDose","tdd",
    "fasting1","fasting2","fasting3","basalCurrentDose"].forEach(id=>$(id).value="");
 
   $("targetGlucose").value=settings.defaultTarget;
@@ -134,8 +134,6 @@ function estimatedIob(){
 }
 
 function iobUsed(){
-  const manual=parseNum($("manualIob").value);
-  if(manual!==null&&manual>=0)return manual;
   return estimatedIob();
 }
 
@@ -306,7 +304,7 @@ document.querySelectorAll("#steroidToggle button").forEach(b=>b.addEventListener
 }));
 
 ["carbs","icr","currentGlucose","targetGlucose","isf","activeInsulinTime","recentDose",
- "hoursSinceDose","manualIob","activityReductionPct","steroidIncreasePct"].forEach(id=>$(id).addEventListener("input",calculate));
+ "hoursSinceDose","activityReductionPct","steroidIncreasePct"].forEach(id=>$(id).addEventListener("input",calculate));
 
 ["fasting1","fasting2","fasting3","basalCurrentDose","basalIncrement"].forEach(id=>$(id).addEventListener("input",calculateBasal));
 
